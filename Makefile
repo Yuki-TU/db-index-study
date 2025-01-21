@@ -18,8 +18,7 @@ down: ## コンテナ停止
 
 .PHONY: insert
 insert: ## データ挿入
-	# @docker compose exec -T bastion mariadb --skip-ssl sample -u admin -ppassword -h db < ./insert.sql
-	@docker compose exec -T bastion mariadb --skip-ssl sample -u admin -ppassword -h db < ./insert.sql
+	@docker compose exec -T bastion ./insert.sh
 
 .PHONY: help
 help: ## ヘルプ
