@@ -1,0 +1,37 @@
+services:
+  bastion:
+    container_name: bastion
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASSWORD: password
+      DB_NAME: sample
+    command: sh
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:8.0.31
+    platform: linux/amd64
+    container_name: sample-db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: sample
+    volumes:
+      - db-data:/var/lib/mysql
+      - $PWD/conf.d:/etc/mysql/conf.d:cached
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+volumes:
+  db-data:
